@@ -1,0 +1,221 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Instaclone API",
+        "version": "1.0.0",
+        "description": "Documentação completa da nossa rede social"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Cole o seu token de login aqui para testar as rotas protegidas."
+            }
+        }
+    },
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
+    "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": ["1. Autenticação"],
+                "summary": "Faz o login e retorna o token de acesso",
+                "security": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "teste@instaclone.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": { "description": "Login realizado com sucesso e token gerado" },
+                    "401": { "description": "Credenciais inválidas" }
+                }
+            }
+        },
+        "/api/feed": {
+            "get": {
+                "tags": ["2. Feed e Posts"],
+                "summary": "Retorna o feed de posts (quem o usuário segue + próprios posts)",
+                "responses": {
+                    "200": { "description": "Lista de posts paginada" }
+                }
+            }
+        },
+        "/api/posts": {
+            "post": {
+                "tags": ["2. Feed e Posts"],
+                "summary": "Cria uma nova publicação com imagem",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Arquivo de imagem (JPG, PNG)"
+                                    },
+                                    "caption": {
+                                        "type": "string",
+                                        "example": "Meu primeiro post na rede!"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": { "description": "Post criado com sucesso" }
+                }
+            }
+        },
+        "/api/users/suggestions": {
+            "get": {
+                "tags": ["3. Usuários e Seguidores"],
+                "summary": "Retorna 5 sugestões de usuários para seguir",
+                "responses": {
+                    "200": { "description": "Lista de usuários sugeridos" }
+                }
+            }
+        },
+        "/api/users/{id}/follow": {
+            "post": {
+                "tags": ["3. Usuários e Seguidores"],
+                "summary": "Segue um usuário",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "Seguindo com sucesso" }
+                }
+            },
+            "delete": {
+                "tags": ["3. Usuários e Seguidores"],
+                "summary": "Deixa de seguir um usuário",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "Deixou de seguir com sucesso" }
+                }
+            }
+        },
+        "/api/posts/{id}/like": {
+            "post": {
+                "tags": ["4. Interações"],
+                "summary": "Curte uma publicação",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "Post curtido com sucesso" }
+                }
+            },
+            "delete": {
+                "tags": ["4. Interações"],
+                "summary": "Remove a curtida de uma publicação",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "Curtida removida" }
+                }
+            }
+        },
+        "/api/posts/{id}/comments": {
+            "get": {
+                "tags": ["4. Interações"],
+                "summary": "Lista os comentários de uma publicação",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "Lista de comentários paginada" }
+                }
+            },
+            "post": {
+                "tags": ["4. Interações"],
+                "summary": "Adiciona um comentário em uma publicação",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "body": {
+                                        "type": "string",
+                                        "example": "Que foto legal! 👋"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": { "description": "Comentário adicionado com sucesso" }
+                }
+            }
+        }
+    }
+}
