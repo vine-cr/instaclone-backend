@@ -18,7 +18,7 @@ fi
 if [ "${DB_CONNECTION:-}" = "mysql" ] && [ -n "${DB_HOST:-}" ]; then
     echo "Waiting for MySQL at ${DB_HOST}:${DB_PORT:-3306}..."
     for i in $(seq 1 60); do
-        if mysqladmin ping -h "${DB_HOST}" -P "${DB_PORT:-3306}" -u "${DB_USERNAME:-root}" -p"${DB_PASSWORD:-}" --silent >/dev/null 2>&1; then
+        if nc -z "${DB_HOST}" "${DB_PORT:-3306}" >/dev/null 2>&1; then
             break
         fi
         sleep 1

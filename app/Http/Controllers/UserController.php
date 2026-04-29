@@ -41,11 +41,19 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        return response()->json($this->userService->search($request->query('q', '')));
+        $perPage = max(1, min((int) $request->query('per_page', 20), 50));
+
+        return response()->json(
+            $this->userService->search($request->query('q', ''), $perPage)
+        );
     }
 
     public function suggestions(Request $request)
     {
-        return response()->json($this->userService->getSuggestions($request->user()));
+        $perPage = max(1, min((int) $request->query('per_page', 20), 50));
+
+        return response()->json(
+            $this->userService->getSuggestions($request->user(), $perPage)
+        );
     }
 }

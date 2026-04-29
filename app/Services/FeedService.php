@@ -15,11 +15,10 @@ class FeedService
                 ->from('follows')
                 ->where('follower_id', $user->id);
         })
-            ->orWhere('user_id', $user->id) // Inclui também os posts do próprio usuário
-            ->with('user') // Traz os dados de quem postou junto com o post
-            // PREPARAÇÃO: Adicionamos a contagem de likes.
-            // ->withCount(['likes' /*, 'comments'*/])
-            ->latest() // Ordena do mais novo para o mais antigo
-            ->paginate(15); // Paginação de 15 em 15
+            ->orWhere('user_id', $user->id)
+            ->with('user')
+            ->withCount(['likes', 'comments'])
+            ->latest()
+            ->paginate(15);
     }
 }

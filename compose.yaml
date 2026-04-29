@@ -19,6 +19,8 @@ services:
             - .env
         environment:
             DB_HOST: mysql
+            MAX_REQUESTS: "1"
+            OCTANE: "0"
         ports:
             - "8000:8000"
         volumes:

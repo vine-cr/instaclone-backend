@@ -14,6 +14,11 @@ class LikeController extends Controller
         $this->likeService = $likeService;
     }
 
+    public function toggle(Request $request, $id)
+    {
+        return response()->json($this->likeService->toggle($request->user(), (int) $id));
+    }
+
     public function store(Request $request, $id)
     {
         return response()->json($this->likeService->like($request->user(), (int) $id));

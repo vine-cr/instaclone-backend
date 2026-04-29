@@ -14,10 +14,10 @@ class FollowService
             throw new SelfFollowException();
         }
 
-        $followingUser = User::findOrFail($followingId);
+        User::findOrFail($followingId);
 
         // Se já segue, desseguimos (detach). Se não, seguimos (attach).
-        if ($follower->following()->where('following_id', $followingId)->exists()) {
+        if ($follower->following()->whereKey($followingId)->exists()) {
             $follower->following()->detach($followingId);
             return ['status' => 'unfollowed'];
         }
@@ -41,7 +41,7 @@ class FollowService
     public function isFollowing(User $follower, int $followingId)
     {
         return [
-            'is_following' => $follower->following()->where('following_id', $followingId)->exists()
+            'is_following' => $follower->following()->whereKey($followingId)->exists()
         ];
     }
 }

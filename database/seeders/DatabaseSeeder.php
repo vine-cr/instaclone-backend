@@ -7,11 +7,16 @@ use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Like;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
+    private const SAMPLE_JPEG_BASE64 = '/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAQEBAQEA8QDw8PEA8PDw8QDw8PDw8QFREWFhURFRUYHSggGBolGxUVITEhJSkrLi4uFx8zODMsNygtLisBCgoKDg0OGhAQGy0mICYtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAAEAAQMBIgACEQEDEQH/xAAXAAEBAQEAAAAAAAAAAAAAAAAAAQID/8QAFhEBAQEAAAAAAAAAAAAAAAAAAQAC/9oADAMBAAIQAxAAAAGjAqf/xAAbEAACAwADAAAAAAAAAAAAAAABAgADEQQSIf/aAAgBAQABBQK8V3E6x5Yw2f/EABYRAQEBAAAAAAAAAAAAAAAAAAABEf/aAAgBAwEBPwGn/8QAFhEBAQEAAAAAAAAAAAAAAAAAAQAR/9oACAECAQE/AYf/xAAaEAADAQEBAQAAAAAAAAAAAAABAhEAMUFh/9oACAEBAAY/ArV5Q2GQf//EABwQAQADAQEBAQAAAAAAAAAAAAEAESExQVFhcf/aAAgBAQABPyG4mPIZ0XnqM4zjO+0wI2K5H//aAAwDAQACAAMAAAAQ8//EABYRAQEBAAAAAAAAAAAAAAAAAAABEf/aAAgBAwEBPxCQf//EABcRAQEBAQAAAAAAAAAAAAAAAAERACH/2gAIAQIBAT8QjIv/xAAdEAEAAwEAAwAAAAAAAAAAAAABABEhMUFRYXGB/9oACAEBAAE/EE2zj4tt3j6FfGLr2u0V2qY1E1l3Qd5Jr3fZs4q5P/2Q==';
+
     public function run(): void
     {
+        $this->ensureSampleImagesExist();
+
         // 1. Cria o Usuário de Teste principal
         $userTeste = User::factory()->create([
             'name' => 'Usuário Teste',
@@ -56,6 +61,23 @@ class DatabaseSeeder extends Seeder
             $usersToFollow = $users->where('id', '!=', $user->id)->random(4);
             foreach ($usersToFollow as $followedUser) {
                 $user->following()->attach($followedUser->id);
+            }
+        }
+    }
+
+    private function ensureSampleImagesExist(): void
+    {
+        $imageBinary = base64_decode(self::SAMPLE_JPEG_BASE64, true);
+
+        if ($imageBinary === false) {
+            return;
+        }
+
+        for ($index = 1; $index <= 5; $index++) {
+            $path = "posts/sample_image_{$index}.jpg";
+
+            if (!Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->put($path, $imageBinary);
             }
         }
     }

@@ -21,13 +21,13 @@ class PostService
 
     public function getPost(int $id): Post
     {
-        return Post::with('user')->findOrFail($id);
+        return Post::with('user')->withCount(['likes', 'comments'])->findOrFail($id);
     }
 
     public function updateCaption(Post $post, string $caption): Post
     {
         $post->update(['caption' => $caption]);
-        return $post;
+        return $post->load('user')->loadCount(['likes', 'comments']);
     }
 
     public function deletePost(Post $post): void
@@ -38,6 +38,6 @@ class PostService
 
     public function getUserPosts(int $userId): LengthAwarePaginator
     {
-        return Post::where('user_id', $userId)->latest()->paginate(12);
+        return Post::where('user_id', $userId)->with('user')->withCount(['likes', 'comments'])->latest()->paginate(12);
     }
 }

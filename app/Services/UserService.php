@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
 class UserService
@@ -33,22 +35,22 @@ class UserService
         return $path;
     }
 
-    public function search(string $query)
+    public function search(string $query, int $perPage = 20): LengthAwarePaginator
     {
         return User::where('username', 'like', "%{$query}%")
             ->orWhere('name', 'like', "%{$query}%")
-            ->limit(10)
-            ->get();
+            ->paginate($perPage);
     }
 
-    public function getSuggestions(User $authenticatedUser)
+    public function getSuggestions(User $authenticatedUser, int $perPage = 20): LengthAwarePaginator
     {
         return User::where('id', '!=', $authenticatedUser->id)
-            ->whereDoesntHave('followers', function($query) use ($authenticatedUser) {
-                $query->where('follower_id', $authenticatedUser->id);
+            ->whereNotIn('id', function (Builder $query) use ($authenticatedUser) {
+                $query->select('following_id')
+                    ->from('follows')
+                    ->where('follower_id', $authenticatedUser->id);
             })
             ->inRandomOrder()
-            ->limit(5)
-            ->get();
+            ->paginate($perPage);
     }
 }

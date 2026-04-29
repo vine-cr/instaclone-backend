@@ -4,9 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\URL;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -25,6 +27,8 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'bio',
+        'avatar_url',
     ];
 
     /**
@@ -36,6 +40,8 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    protected $appends = ['avatar_url'];
 
     /**
      * Get the attributes that should be cast.
@@ -50,6 +56,15 @@ class User extends Authenticatable
         ];
     }
 
+    public function getAvatarUrlAttribute()
+    {
+        $avatarPath = $this->attributes['avatar_url'] ?? null;
+        if (!$avatarPath) {
+            return null;
+        }
+        return URL::to("storage/{$avatarPath}");
+    }
+
     // Usuários que me seguem
     public function followers()
     {
@@ -62,7 +77,7 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id');
     }
 
-    public function posts()
+    public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }

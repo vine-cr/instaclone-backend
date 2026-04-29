@@ -4,31 +4,72 @@ namespace App\Services;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Like;
 
 class LikeService
 {
+    public function toggle(User $user, int $postId)
+    {
+        $post = Post::findOrFail($postId);
+
+        // Verifica se o like já existe
+        $like = Like::where('user_id', $user->id)
+                    ->where('post_id', $postId)
+                    ->first();
+
+        if ($like) {
+            // Se existe, deleta (remover like)
+            $like->delete();
+            $status = 'unliked';
+            $liked = false;
+        } else {
+            // Se não existe, cria (adicionar like)
+            Like::create([
+                'user_id' => $user->id,
+                'post_id' => $postId
+            ]);
+            $status = 'liked';
+            $liked = true;
+        }
+
+        return [
+            'status' => $status,
+            'liked' => $liked,
+            'likes_count' => $post->likes()->count()
+        ];
+    }
+
     public function like(User $user, int $postId)
     {
         $post = Post::findOrFail($postId);
 
-        // firstOrCreate é idempotente: só cria se não existir
-        $post->likes()->firstOrCreate(['user_id' => $user->id]);
+        Like::firstOrCreate([
+            'user_id' => $user->id,
+            'post_id' => $postId
+        ]);
+
+        $isLiked = Like::where('user_id', $user->id)
+                       ->where('post_id', $postId)
+                       ->exists();
 
         return [
             'status' => 'liked',
+            'liked' => $isLiked,
             'likes_count' => $post->likes()->count()
         ];
     }
 
     public function unlike(User $user, int $postId)
     {
-        $post = Post::findOrFail($postId);
+        Like::where('user_id', $user->id)
+            ->where('post_id', $postId)
+            ->delete();
 
-        // delete() é idempotente: se não achar nada, não dá erro e segue o jogo
-        $post->likes()->where('user_id', $user->id)->delete();
+        $post = Post::findOrFail($postId);
 
         return [
             'status' => 'unliked',
+            'liked' => false,
             'likes_count' => $post->likes()->count()
         ];
     }
@@ -36,7 +77,6 @@ class LikeService
     public function getLikes(int $postId)
     {
         $post = Post::findOrFail($postId);
-        // Traz as curtidas com os dados do usuário que curtiu
         return $post->likes()->with('user')->paginate(15);
     }
 }

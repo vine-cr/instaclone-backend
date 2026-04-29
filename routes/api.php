@@ -47,8 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/feed', [App\Http\Controllers\FeedController::class, 'index']);
 
     // Curtidas
-    Route::post('/posts/{id}/like', [App\Http\Controllers\LikeController::class, 'store']);
-    Route::delete('/posts/{id}/like', [App\Http\Controllers\LikeController::class, 'destroy']);
+    Route::post('/posts/{id}/like', [App\Http\Controllers\LikeController::class, 'toggle']);
+    Route::delete('/posts/{id}/like', [App\Http\Controllers\LikeController::class, 'toggle']);
     Route::get('/posts/{id}/likes', [App\Http\Controllers\LikeController::class, 'index']);
 
     // Comentários
