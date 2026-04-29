@@ -7,7 +7,6 @@ use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Like;
 use Illuminate\Database\Seeder;
-use
 
 class DatabaseSeeder extends Seeder
 {
