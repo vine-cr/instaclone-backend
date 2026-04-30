@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('follower_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('following_id')->constrained('users')->onDelete('cascade');
-            // Impede que um usuário siga a mesma pessoa duas vezes no banco de dados
             $table->unique(['follower_id', 'following_id']);
             $table->timestamps();
         });

@@ -65,13 +65,11 @@ class User extends Authenticatable
         return URL::to("storage/{$avatarPath}");
     }
 
-    // Usuários que me seguem
     public function followers()
     {
         return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id');
     }
-
-    // Usuários que eu sigo
+    
     public function following()
     {
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id');

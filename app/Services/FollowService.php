@@ -9,14 +9,12 @@ class FollowService
 {
     public function toggleFollow(User $follower, int $followingId)
     {
-        // Dispara o erro 403 se tentar seguir a si mesmo
         if ($follower->id === $followingId) {
             throw new SelfFollowException();
         }
 
         User::findOrFail($followingId);
 
-        // Se já segue, desseguimos (detach). Se não, seguimos (attach).
         if ($follower->following()->whereKey($followingId)->exists()) {
             $follower->following()->detach($followingId);
             return ['status' => 'unfollowed'];

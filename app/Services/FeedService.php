@@ -10,7 +10,6 @@ class FeedService
     public function getFeed(User $user)
     {
         return Post::whereIn('user_id', function ($query) use ($user) {
-            // Subquery: busca direto no banco quem o usuário segue
             $query->select('following_id')
                 ->from('follows')
                 ->where('follower_id', $user->id);

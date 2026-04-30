@@ -24,7 +24,6 @@ class UserService
 
     public function updateAvatar(User $user, $image)
     {
-        // Deleta o avatar antigo se existir
         if ($user->avatar_url) {
             Storage::disk('public')->delete($user->avatar_url);
         }

@@ -12,8 +12,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
-
-            // Aqui está a mágica: a combinação de usuário e post deve ser única!
             $table->unique(['user_id', 'post_id']);
             $table->timestamps();
         });

@@ -31,7 +31,6 @@ class AuthService
             ]);
         }
 
-        // Remove tokens antigos para manter apenas a sessão atual
         $user->tokens()->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -49,7 +48,6 @@ class AuthService
 
     public function refresh(User $user)
     {
-        // Deleta o token atual e gera um novo
         $user->currentAccessToken()->delete();
 
         return $user->createToken('auth_token')->plainTextToken;

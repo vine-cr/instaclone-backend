@@ -32,7 +32,6 @@ class CommentService
     public function getComments(int $postId)
     {
         $post = Post::findOrFail($postId);
-        // Traz os comentários junto com quem comentou, ordenados do mais antigo pro mais novo
         return $post->comments()->with('user')->oldest()->paginate(15);
     }
 }

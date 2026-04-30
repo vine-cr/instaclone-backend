@@ -11,7 +11,7 @@ class Post extends Model
 {
     protected $fillable = ['user_id', 'image_url', 'caption'];
 
-    protected $appends = ['image_url'];
+    protected $appends = ['image_url'];   
 
     public function user(): BelongsTo
     {

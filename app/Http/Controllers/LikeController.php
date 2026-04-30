@@ -19,16 +19,6 @@ class LikeController extends Controller
         return response()->json($this->likeService->toggle($request->user(), (int) $id));
     }
 
-    public function store(Request $request, $id)
-    {
-        return response()->json($this->likeService->like($request->user(), (int) $id));
-    }
-
-    public function destroy(Request $request, $id)
-    {
-        return response()->json($this->likeService->unlike($request->user(), (int) $id));
-    }
-
     public function index($id)
     {
         return response()->json($this->likeService->getLikes((int) $id));
